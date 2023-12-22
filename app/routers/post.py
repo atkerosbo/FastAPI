@@ -1,5 +1,5 @@
 from .. import models,schemas,utils
-from fastapi import Body, FastAPI, Response, status, HTTPException, APIRouter
+from fastapi import Body, FastAPI, Request, Response, status, HTTPException, APIRouter
 from random import randrange
 from typing import Optional, List
 from sqlalchemy.orm import Session
@@ -7,6 +7,10 @@ from fastapi import Depends
 from ..database import get_db
 from .. import oauth2
 from sqlalchemy import func
+from fastapi.templating import Jinja2Templates
+
+templates = Jinja2Templates(directory="templates")
+
 
 router = APIRouter(
     prefix="/posts",
@@ -16,12 +20,12 @@ router = APIRouter(
 #get all posts
 
 @router.get("/", response_model=List[schemas.PostOut])
-
-def get_posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user), limit: int = 10, skip:int = 0, search: Optional[str] =""):
+def get_posts(request: Request, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user), limit: int = 10, skip:int = 0, search: Optional[str] =""):
 
     posts = db.query(models.Post, func.count(models.Vote.post_id).label("votes")).join(models.Vote,models.Vote.post_id == models.Post.id, isouter=True).group_by(models.Post.id).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
     #posts = list ( map (lambda x : x._mapping, results) )
-    return posts
+    return templates.TemplateResponse("posts.html", {"request": request, "posts": posts})
+    #return posts
 
 #get users posts  
 @router.get("/user/", response_model=List[schemas.Post])
@@ -46,13 +50,17 @@ def create_posts(
 
 
 #get specific post with id
-@router.get("/{id}", response_model=schemas.PostOut)
-def get_post(id:int,db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+@router.get("/{id}", response_model=schemas.PostOut, name ='get_single_post')
+def get_post(request: Request, id:int,db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     #post = db.query(models.Post).filter(models.Post.id == id).first()
     post = db.query(models.Post, func.count(models.Vote.post_id).label("votes")).join(models.Vote,models.Vote.post_id == models.Post.id, isouter=True).group_by(models.Post.id).filter(models.Post.id == id).first()
+    print(post)
+    
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
-    return post
+    return templates.TemplateResponse("post.html", {"request": request, "post": post})
+    #return post
+
 
 #update posts
 @router.put("/{id}", response_model=schemas.Post)

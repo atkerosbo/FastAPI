@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastAPI Template</title>
+    <style>
+        body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+header {
+    background-color: #007BFF;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: #ffffff;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    background-color: #fff;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+p {
+    margin: 0;
+}
+</style>
+</head>
+<body>
+    <header>
+        <h1>Welcme to your dashboard</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="/">Main Page</a></li>
+            <li><a href="users.html">Users</a></li>
+            <li><a href="create_post.html">Create Post</a></li>
+            <li><a href="/posts">List Posts</a></li>
+            <li><a href="#">Vote</a></li>
+        </ul>
+    </nav>
+
+    <section>
+        <p>
+            <h2>You are logged in as :{{"current_user"}}</h2>
+        </p>
+    </section>
+    <section>
+        <h1>These are all your Posts</h1>
+
+    {% if posts %}
+        <ul>
+            
+            {% for post, vote_count in posts %}
+                <li>
+                    <h3><a href="{{url_for('get_single_post', id=post.id) }}">{{ post.title }}</a></h3>
+                    <p>{{ post.content }}</p>
+                    <p>Author: {{ post.owner_id }}</p>
+                    <p>Votes: {{ vote_count }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No posts found.</p>
+    {% endif %}
+    </section>
+</body>
+</html>
+<!-- <script>
+    // Assuming you have a function to handle the login form submission
+    function handleLoginFormSubmission() {
+      // Perform the login request
+      fetch('/login', {
+        method: 'POST',
+        // Include any necessary headers and credentials
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Redirect to the dashboard page
+        window.location.href = '/dashboard';
+      })
+      .catch(error => {
+        console.error('Login error:', error);
+      });
+    }
+  </script> -->
+  

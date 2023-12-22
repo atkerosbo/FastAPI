@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Detail</title>
+    <style>
+                body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background-color: #007BFF;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #fff;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Post Detail</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Main Page</a></li>
+                <li><a href="users.html">Users</a></li>
+                <li><a href="#">Create Post</a></li>
+                <li><a href="#">List Posts</a></li>
+                <li><a href="#">Vote</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <article>
+        {% set post_object, vote_count = post %}
+        <h2>{{ post_object.title }}</h2>
+        <p>{{ post_object.content }}</p>
+        <div class="owner-info">
+            <p>Author: {{ post_object.owner.email }}</p>
+            <p>Published: {{ "Yes" if post_object.published else "No" }}</p>
+            <p>Created at: {{ post_object.created_at }}</p>
+        </div>
+        <p>Votes: {{ vote_count }}</p>
+    </article>
+</body>
+</body>
+</html>
